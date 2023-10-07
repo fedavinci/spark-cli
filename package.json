@@ -1,0 +1,30 @@
+{
+  "name": "cli",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/index.js",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "build": "tsc --build"
+  },
+  "bin": {
+    "spark-cli": "./bin/index.js"
+  },
+  "keywords": [],
+  "author": "fedavinci",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/crypto-js": "^4.1.2",
+    "@types/node": "^20.8.3",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "commander": "^11.0.0",
+    "crypto-js": "^4.1.1",
+    "ws": "^8.14.2"
+  },
+  "files": [
+    "dist"
+  ]
+}
