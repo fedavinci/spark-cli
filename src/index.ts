@@ -16,8 +16,10 @@ const DEFAULT_CLI_HOME = ".spark-ai";
 program
   .argument("[question]", "对星火大模型提出的问题")
   .action(async () => {
+    await getSparkAIConfig();
+
     process.stdout.write(
-      "提示：1 token 约等于1.5个中文汉字 或者 0.8个英文单词\n",
+      "\n提示：1 token 约等于1.5个中文汉字 或者 0.8个英文单词\n\n"
     );
 
     checkUserHome();
@@ -47,7 +49,7 @@ type AIResponse = {
           content: string; // AI的回答内容
           role: "user" | "assistant"; // 角色标识，固定为assistant，标识角色为AI
           index: number; // 	结果序号，取值为[0,10]; 当前为保留字段，开发者可忽略
-        },
+        }
       ];
     };
     usage?: {
@@ -70,7 +72,7 @@ async function handlerQuestion(question) {
 
     process.stdout.write(`\n\n提问部分消耗token数量：${prompt_tokens}\n`);
     process.stdout.write(`回答部分消耗token数量：${completion_tokens}\n`);
-    process.stdout.write(`本次回答总共消耗token数量：${total_tokens}\n`);
+    process.stdout.write(`本次回答总共消耗token数量：${total_tokens}\n\n`);
   }
 
   rl.prompt();
@@ -88,22 +90,22 @@ async function getSparkAIConfig() {
 
     try {
       JSON.parse(
-        await fs.readFile(configFilePath).then((res) => res.toString()),
+        await fs.readFile(configFilePath).then((res) => res.toString())
       );
     } catch (e) {
       throw new Error(
-        "配置文件格式错误,请检查配置文件: " + configFilePath.toString(),
+        "配置文件格式错误,请检查配置文件: " + configFilePath.toString()
       );
     }
   } catch (e) {
     const APPID = await new Promise((resolve) =>
-      rl.question("请输入 APPID:", resolve),
+      rl.question("请输入 APPID:", resolve)
     );
     const APISecret = await new Promise((resolve) =>
-      rl.question("请输入 APISecret:", resolve),
+      rl.question("请输入 APISecret:", resolve)
     );
     const APIKey = await new Promise((resolve) =>
-      rl.question("请输入 APIKey:", resolve),
+      rl.question("请输入 APIKey:", resolve)
     );
 
     // 创建默认的配置文件
@@ -116,8 +118,8 @@ async function getSparkAIConfig() {
           APIKey: APIKey,
         },
         undefined,
-        "\t",
-      ),
+        "\t"
+      )
     );
   }
 
@@ -173,7 +175,7 @@ function askAI(question): Promise<AIResponse[]> {
     };
 
     const websocket = new WebSocket(
-      `${url}?authorization=${authorization}&date=${date}&host=${host}`,
+      `${url}?authorization=${authorization}&date=${date}&host=${host}`
     );
 
     // 1分钟后 关闭websocket连接
@@ -199,8 +201,8 @@ function askAI(question): Promise<AIResponse[]> {
       responseList.push(res);
       process.stdout.write(
         JSON.parse(data.toString())
-          .payload.choices.text.map((text) => text.content)
-          .join(""),
+          .payload.choices.text.map((text) => text.content.replace(/\n/g, ""))
+          .join("")
       );
     });
 
